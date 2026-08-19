@@ -562,7 +562,7 @@ let state = defaultState();
 
 /* ---------- Connexion à Google Drive (remplace le fichier local sur le NAS) ---------- */
 // ⚠️ À CONFIGURER : Client ID obtenu dans Google Cloud Console (voir instructions fournies séparément)
-const GOOGLE_CLIENT_ID = '801256376174-rlarm1dq1ioqpv1b07otrqfo86hg17ni.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = 'VOTRE_CLIENT_ID.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FILE_NAME = 'livre-comptes-data.json';
 const DRIVE_FOLDER_NAME = 'Livre de comptes';
@@ -597,13 +597,42 @@ function renderFileBanner(mode){
   if(mode === 'connected'){ el.innerHTML=''; return; }
   if(mode === 'unsupported'){
     el.innerHTML = '<div class="banner" style="background:var(--danger-soft);border-color:#E2B3AE;color:#7A2E2E;">'
-      + '<span>Le service de connexion Google n\'a pas pu se charger (bloqueur de scripts ou pas de connexion internet ?). Les données sont pour l\'instant conservées uniquement sur cet appareil.</span></div>';
+      + '<span>Le service de connexion Google n\'a pas pu se charger (connexion lente, bloqueur de scripts, ou pas d\'internet). Les données sont pour l\'instant conservées uniquement sur cet appareil.</span>'
+      + '<button class="btn btn-sm" id="btn-retry-google">Réessayer</button></div>';
+    const r = document.getElementById('btn-retry-google');
+    if(r) r.addEventListener('click', retryGoogleConnection);
     return;
   }
   el.innerHTML = '<div class="banner"><span>Vous n\'êtes pas encore connecté à Google Drive — vos données restent locales à cet appareil.</span>'
     + '<button class="btn btn-primary btn-sm" id="btn-connect-banner">Se connecter</button></div>';
   const b = document.getElementById('btn-connect-banner');
   if(b) b.addEventListener('click', ()=>switchTab('data'));
+}
+
+async function retryGoogleConnection(){
+  setSyncStatus('Nouvelle tentative de connexion au service Google…');
+  const gisReady = await waitForGoogleIdentity(6000);
+  const ready = gisReady && initGoogleClient();
+  if(!ready){
+    setSyncStatus('Service Google toujours indisponible', true);
+    renderFileBanner('unsupported');
+    toast('Toujours impossible de joindre Google. Vérifiez votre connexion internet.', true);
+    return;
+  }
+  setSyncStatus('Non connecté à Google Drive', true);
+  renderFileBanner('none');
+  toast('Service Google chargé — vous pouvez maintenant vous connecter.');
+}
+
+function waitForGoogleIdentity(timeoutMs){
+  return new Promise((resolve)=>{
+    const start = Date.now();
+    (function check(){
+      if(window.google && window.google.accounts && window.google.accounts.oauth2){ resolve(true); return; }
+      if(Date.now() - start > timeoutMs){ resolve(false); return; }
+      setTimeout(check, 150);
+    })();
+  });
 }
 
 function initGoogleClient(){
@@ -1689,7 +1718,8 @@ switchTab('dashboard');
   renderAll();
 
   loadDriveIds();
-  const ready = initGoogleClient();
+  const gisReady = await waitForGoogleIdentity(6000);
+  const ready = gisReady && initGoogleClient();
   if(!ready){
     setSyncStatus('Service Google indisponible', true);
     renderFileBanner('unsupported');
