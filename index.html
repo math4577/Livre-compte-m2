@@ -103,11 +103,10 @@
 
   .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
   .grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;}
-  .grid-2x2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-  .dash-card{display:flex;flex-direction:column;height:300px;}
+  .dash-card{display:flex;flex-direction:column;max-height:340px;}
   .dash-card .card-head{flex-shrink:0;}
   .dash-card-body{flex:1;min-height:0;overflow-y:auto;padding-right:2px;}
-  @media (max-width:980px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-2{grid-template-columns:1fr;} .grid-2x2{grid-template-columns:1fr;} .dash-card{height:auto;max-height:280px;}}
+  @media (max-width:980px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-2{grid-template-columns:1fr;} .dash-card{max-height:280px;}}
 
   /* Ledger hero */
   .ledger-hero{
@@ -127,7 +126,7 @@
   /* Account cards */
   .acc-card{border-radius:var(--radius);padding:16px 18px;border:1px solid var(--line);background:var(--paper-3);box-shadow:var(--shadow);position:relative;overflow:hidden;}
   .acc-card .acc-name{font-size:12.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
-  .acc-card .acc-solde{font-family:var(--font-mono);font-size:21px;font-weight:700;margin-top:6px;color:var(--ink);}
+  .acc-solde{font-family:var(--font-mono);font-size:21px;font-weight:700;margin-top:6px;color:var(--ink);}
   .acc-card .acc-tag{font-size:11px;color:var(--text-muted);margin-top:2px;}
 
   /* Chips */
@@ -305,10 +304,10 @@
       <div id="fixed-banner"></div>
       <div class="ledger-hero" id="ledger-hero"></div>
       <div class="grid-4" id="account-cards" style="margin-top:18px;"></div>
-      <div class="grid-2x2" style="margin-top:18px;">
+      <div style="margin-top:18px;">
         <div class="card dash-card">
-          <div class="card-head"><h3>Revenus du mois</h3></div>
-          <div id="dashboard-revenus" class="dash-card-body"></div>
+          <div class="card-head"><h3>À valider ce mois-ci</h3></div>
+          <div id="dashboard-avalider" class="dash-card-body"></div>
         </div>
         <div class="card dash-card">
           <div class="card-head"><h3>Équilibre du mois</h3></div>
@@ -319,8 +318,8 @@
           <div id="dashboard-postes" class="dash-card-body"></div>
         </div>
         <div class="card dash-card">
-          <div class="card-head"><h3>À valider ce mois-ci</h3></div>
-          <div id="dashboard-avalider" class="dash-card-body"></div>
+          <div class="card-head"><h3>Revenus du mois</h3></div>
+          <div id="dashboard-revenus" class="dash-card-body"></div>
         </div>
       </div>
     </section>
@@ -474,26 +473,24 @@
         </div>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3>Sauvegarde complète (JSON)</h3>
-          <p class="hint" style="margin-bottom:14px;">Une copie ponctuelle de toutes vos données, utile en plus du fichier central, ou pour changer d'appareil.</p>
-          <div class="btn-row">
-            <button class="btn btn-primary" id="btn-export-json">Exporter (.json)</button>
-            <button class="btn" id="btn-import-json-trigger">Importer (.json)</button>
-          </div>
-          <input type="file" id="input-import-json" accept="application/json" style="display:none;">
+      <div class="card">
+        <h3>Sauvegarde complète (JSON)</h3>
+        <p class="hint" style="margin-bottom:14px;">Une copie ponctuelle de toutes vos données, utile en plus du fichier central, ou pour changer d'appareil.</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-export-json">Exporter (.json)</button>
+          <button class="btn" id="btn-import-json-trigger">Importer (.json)</button>
         </div>
-        <div class="card">
-          <h3>Export tableur (CSV)</h3>
-          <p class="hint" style="margin-bottom:14px;">Export de l'historique des dépenses, compatible Excel / Google Sheets (séparateur point-virgule).</p>
-          <div class="btn-row">
-            <button class="btn btn-primary" id="btn-export-csv">Exporter (.csv)</button>
-            <button class="btn" id="btn-import-csv-trigger">Importer (.csv)</button>
-          </div>
-          <input type="file" id="input-import-csv" accept=".csv" style="display:none;">
-          <p class="hint">L'import CSV attend le même format que l'export (colonnes identiques).</p>
+        <input type="file" id="input-import-json" accept="application/json" style="display:none;">
+      </div>
+      <div class="card">
+        <h3>Export tableur (CSV)</h3>
+        <p class="hint" style="margin-bottom:14px;">Export de l'historique des dépenses, compatible Excel / Google Sheets (séparateur point-virgule).</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-export-csv">Exporter (.csv)</button>
+          <button class="btn" id="btn-import-csv-trigger">Importer (.csv)</button>
         </div>
+        <input type="file" id="input-import-csv" accept=".csv" style="display:none;">
+        <p class="hint">L'import CSV attend le même format que l'export (colonnes identiques).</p>
       </div>
       <div class="card">
         <h3>Zone sensible</h3>
@@ -562,7 +559,7 @@ let state = defaultState();
 
 /* ---------- Connexion à Google Drive (remplace le fichier local sur le NAS) ---------- */
 // ⚠️ À CONFIGURER : Client ID obtenu dans Google Cloud Console (voir instructions fournies séparément)
-const GOOGLE_CLIENT_ID = '801256376174-rlarm1dq1ioqpv1b07otrqfo86hg17ni.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = 'VOTRE_CLIENT_ID.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FILE_NAME = 'livre-comptes-data.json';
 const DRIVE_FOLDER_NAME = 'Livre de comptes';
