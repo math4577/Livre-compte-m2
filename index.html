@@ -22,8 +22,8 @@
     --warn:#C08A3E;
     --warn-soft:#F5EAD6;
     --commun:#5B7FA6;
-    --marion:#B8637A;
-    --mathieu:#C08A3E;
+    --marion:#b66e81;
+    --mathieu:#c09457;
     --epargne:#5F8F72;
     --radius:12px;
     --radius-sm:8px;
@@ -67,6 +67,7 @@
     background:var(--paper-3);border:4px solid var(--tab-color);border-bottom:none;
     border-radius:12px 12px 0 0;padding:0 16px;
     font-size:13.5px;font-weight:700;color:var(--tab-color);
+    font-family:Verdana, Tahoma, 'Segoe UI', Arial, sans-serif;letter-spacing:.01em;
     transition:height .15s ease,background .15s ease;
     position:relative;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
@@ -256,7 +257,7 @@
   @media (max-width:980px){
     .sidebar{padding:14px 20px 0;gap:10px;}
     .brand span{display:none;}
-    .nav-btn{font-size:12px;height:36px;padding:0 10px;}
+    .nav-btn{font-size:13.5px;height:36px;padding:0 10px;}
     .nav-btn.active{height:42px;}
   }
 
@@ -279,21 +280,21 @@
 <div id="app">
   <nav class="sidebar">
     <div class="brand">
-      <h1>Comptes M²</h1>
+      <h1>Comptes M²♥</h1>
       <span>Mathieu &amp; Marion</span>
     </div>
     <div class="nav" id="nav">
-      <button class="nav-btn" data-tab="dashboard" style="--tab-color:#E8A33D;"><span class="nav-body">Tableau de bord</span></button>
-      <button class="nav-btn" data-tab="depenses" style="--tab-color:#D97B4F;"><span class="nav-body">Opérations</span><span class="nav-badge" id="badge-avalider" style="display:none"></span></button>
-      <button class="nav-btn" data-tab="fixes" style="--tab-color:#7FAF6B;"><span class="nav-body">Opérations fixes</span></button>
-      <button class="nav-btn" data-tab="postes" style="--tab-color:#4FA3AC;"><span class="nav-body">Postes budgétaires</span></button>
-      <button class="nav-btn" data-tab="comptes" style="--tab-color:#B8567F;"><span class="nav-body">Comptes</span></button>
-      <button class="nav-btn" data-tab="data" style="--tab-color:#7B5EA7;"><span class="nav-body">Import / Export</span></button>
+      <button class="nav-btn" data-tab="dashboard" style="--tab-color:#E8A33D;"><span class="nav-body">• Tableau de bord •</span></button>
+      <button class="nav-btn" data-tab="depenses" style="--tab-color:#D97B4F;"><span class="nav-body">• Opérations •</span><span class="nav-badge" id="badge-avalider" style="display:none"></span></button>
+      <button class="nav-btn" data-tab="fixes" style="--tab-color:#7FAF6B;"><span class="nav-body">• Opérations fixes •</span></button>
+      <button class="nav-btn" data-tab="postes" style="--tab-color:#4FA3AC;"><span class="nav-body">• Postes budgétaires •</span></button>
+      <button class="nav-btn" data-tab="comptes" style="--tab-color:#B8567F;"><span class="nav-body">• Comptes •</span></button>
+      <button class="nav-btn" data-tab="data" style="--tab-color:#7B5EA7;"><span class="nav-body">• Import / Export •</span></button>
     </div>
     <div class="sidebar-footer" id="save-indicator">Données locales</div>
   </nav>
 
-  <main class="content">
+  <main class="content"> 
 
     <!-- DASHBOARD -->
     <section class="tab-panel" id="tab-dashboard">
@@ -441,7 +442,7 @@
       </div>
       <div class="card">
         <div class="card-head"><h3>Vos comptes</h3><button class="btn btn-primary" id="btn-add-compte">+ Ajouter un compte</button></div>
-        <div class="table-wrap"><table id="comptes-table"><thead><tr><th>Compte</th><th>Propriétaire</th><th>Type</th><th style="text-align:right">Solde de départ</th><th></th></tr></thead><tbody id="comptes-tbody"></tbody></table></div>
+        <div class="table-wrap"><table id="comptes-table"><thead><tr><th>Compte</th><th>Propriétaire</th><th>Type</th><th style="text-align:right">Solde de départ</th><th>Revenus fixes</th><th></th></tr></thead><tbody id="comptes-tbody"></tbody></table></div>
       </div>
       <div class="card">
         <h3>Paramètres</h3>
@@ -535,7 +536,7 @@ function defaultState(){
       {id:'abonnements', nom:'Abonnements', couleur:CAT_PALETTE[6]},
       {id:'cadeaux', nom:'Cadeaux', couleur:CAT_PALETTE[7]},
       {id:'vacances', nom:'Vacances', couleur:CAT_PALETTE[8]},
-      {id:'autre', nom:'Autre', couleur:CAT_PALETTE[9]},
+      {id:'autre', nom:'Travaux', couleur:CAT_PALETTE[9]},
       {id:'salaire', nom:'Salaire', couleur:CAT_PALETTE[10]},
       {id:'revenus_divers', nom:'Revenus divers', couleur:CAT_PALETTE[11]}
     ],
@@ -559,7 +560,7 @@ let state = defaultState();
 
 /* ---------- Connexion à Google Drive (remplace le fichier local sur le NAS) ---------- */
 // ⚠️ À CONFIGURER : Client ID obtenu dans Google Cloud Console (voir instructions fournies séparément)
-const GOOGLE_CLIENT_ID = '801256376174-rlarm1dq1ioqpv1b07otrqfo86hg17ni.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = 'VOTRE_CLIENT_ID.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FILE_NAME = 'livre-comptes-data.json';
 const DRIVE_FOLDER_NAME = 'Livre de comptes';
@@ -1380,8 +1381,9 @@ document.getElementById('fixed-tbody').addEventListener('change', (ev)=>{
 });
 document.getElementById('btn-add-fixed').addEventListener('click', ()=>openFixedModal());
 
-function openFixedModal(id){
+function openFixedModal(id, presets){
   const existing = id ? state.fixedExpenses.find(f=>f.id===id) : null;
+  presets = presets || {};
   const catOpts = state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.nom)+'</option>').join('');
   const accOpts = state.accounts.map(a=>'<option value="'+a.id+'">'+escapeHtml(a.nom)+'</option>').join('');
   openModal(
@@ -1401,9 +1403,9 @@ function openFixedModal(id){
     +'<div class="btn-row"><button class="btn btn-primary" id="m-save">Enregistrer</button><button class="btn" id="m-cancel">Annuler</button></div>',
     (root)=>{
       const sensSel = root.querySelector('#m-sens');
-      sensSel.value = existing ? (existing.sens || 'depense') : 'depense';
-      root.querySelector('#m-poste').value = existing ? existing.categoryId : state.categories[0].id;
-      root.querySelector('#m-compte').value = existing ? existing.accountId : state.accounts[0].id;
+      sensSel.value = existing ? (existing.sens || 'depense') : (presets.sens || 'depense');
+      root.querySelector('#m-poste').value = existing ? existing.categoryId : (presets.categoryId || state.categories[0].id);
+      root.querySelector('#m-compte').value = existing ? existing.accountId : (presets.accountId || state.accounts[0].id);
       function updateModalSensUI(){
         const isEntree = sensSel.value === 'entree';
         root.querySelector('#m-split-field').style.display = isEntree ? 'none' : '';
@@ -1486,15 +1488,27 @@ function openCategoryModal(id){
 }
 
 /* ============================= COMPTES ============================= */
+function fixedIncomesForAccount(accountId){
+  return state.fixedExpenses.filter(f=>f.actif && (f.sens||'depense')==='entree' && f.accountId===accountId);
+}
+
 function renderComptesTable(){
   const tbody = document.getElementById('comptes-tbody');
   tbody.innerHTML = state.accounts.map(a=>{
     const owner = a.owner==='mathieu'?'Mathieu':(a.owner==='marion'?'Marion':'Commun');
+    const incomes = fixedIncomesForAccount(a.id);
+    const totalIncomes = incomes.reduce((s,f)=>s+Number(f.montantEstime),0);
+    const incomesCell = incomes.length
+      ? '<div class="amount" style="text-align:right;">'+fmtMontant(totalIncomes)+'/mois</div>'
+        +'<div class="muted" style="font-size:11px;text-align:right;">'+incomes.map(f=>escapeHtml(f.nom)).join(', ')+'</div>'
+      : '<span class="muted" style="font-size:12.5px;">Aucun</span>';
     return '<tr><td><span class="chip" style="background:'+a.couleur+'22;color:'+a.couleur+';"><span class="swatch"></span>'+escapeHtml(a.nom)+'</span></td>'
       +'<td>'+owner+'</td>'
       +'<td>'+(a.type==='epargne'?'Épargne':'Courant')+'</td>'
       +'<td class="amount">'+fmtMontant(a.soldeInitial)+'</td>'
+      +'<td>'+incomesCell+'</td>'
       +'<td><div class="row-actions">'
+      +'<button class="btn btn-ghost btn-sm" title="Ajouter un revenu fixe sur ce compte" data-action="add-income" data-id="'+a.id+'">+ Revenu</button>'
       +'<button class="btn btn-ghost btn-sm" data-action="edit-acc" data-id="'+a.id+'">✎</button>'
       +'<button class="btn btn-ghost btn-sm btn-danger" data-action="delete-acc" data-id="'+a.id+'">✕</button>'
       +'</div></td></tr>';
@@ -1506,6 +1520,7 @@ document.getElementById('comptes-tbody').addEventListener('click', (ev)=>{
   if(!btn) return;
   const id = btn.dataset.id;
   if(btn.dataset.action==='edit-acc') openAccountModal(id);
+  if(btn.dataset.action==='add-income'){ switchTab('fixes'); openFixedModal(null, {sens:'entree', accountId:id}); }
   if(btn.dataset.action==='delete-acc'){
     const used = state.expenses.some(e=>e.accountId===id) || state.fixedExpenses.some(f=>f.accountId===id);
     if(used){ toast('Ce compte est utilisé par des dépenses, impossible de le supprimer.', true); return; }
